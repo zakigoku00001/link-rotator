@@ -1,17 +1,38 @@
- const express = require('express');
+const express = require('express');
+const axios = require('axios');
 const app = express();
 
-const links = [
+const usLinks = [
   'https://youtube.com',
-  'https://google.com'
+  'https://youtube.com',
 ];
 
-let currentIndex = 0;
+const otherLinks = [
+  'https://google.com',
+  'https://google.com',
+];
 
-app.get('/', (req, res) => {
-  const link = links[currentIndex];
-  currentIndex = (currentIndex + 1) % links.length;
-  res.redirect(link);
+let usIndex = 0;
+let otherIndex = 0;
+
+app.get('/', async (req, res) => {
+  try {
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const geo = await axios.get(`https://ipapi.co/${ip}/json/`);
+    const country = geo.data.country;
+
+    if (country === 'US') {
+      const redirectUrl = usLinks[usIndex];
+      usIndex = (usIndex + 1) % usLinks.length;
+      return res.redirect(redirectUrl);
+    } else {
+      const redirectUrl = otherLinks[otherIndex];
+      otherIndex = (otherIndex + 1) % otherLinks.length;
+      return res.redirect(redirectUrl);
+    }
+  } catch (error) {
+    return res.redirect(otherLinks[0]);
+  }
 });
 
 const PORT = process.env.PORT || 3000;
