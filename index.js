@@ -3,13 +3,13 @@ const axios = require('axios');
 const app = express();
 
 const usLinks = [
-  'https://afflat3d2.com/trk/lnk/E7696302-A93D-48B1-9037-EC68132AFA55/?o=6365&c=918277&a=744274&k=CFF27779031DA8439CE37AC297BDA0A3&l=5077',
-  'https://afflat3e3.com/trk/lnk/B9668DD2-EB51-47EF-A4B0-ED0B359C8F70/?o=6365&c=918277&a=744563&k=BF40FC282716BA496C23E54153D0AD11&l=5077',
+  'https://youtube.com',
+  'https://facebook.com',
 ];
 
 const otherLinks = [
-  'https://afflat3d3.com/trk/lnk/D5A23BFE-BDBB-4041-B360-629FE48048AC/?o=26153&c=918277&a=746332&k=5EACBE6E42489A50DE9ECCF3CC5FE327&l=28794',
-  'https://afflat3d3.com/trk/lnk/D5A23BFE-BDBB-4041-B360-629FE48048AC/?o=26153&c=918277&a=746332&k=5EACBE6E42489A50DE9ECCF3CC5FE327&l=28794',
+  'https:/instagram.com',
+  'https://twitter.com',
 ];
 
 let usIndex = 0;
