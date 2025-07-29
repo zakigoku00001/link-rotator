@@ -8,7 +8,7 @@ const usLinks = [
 ];
 
 const otherLinks = [
-  'https://www.instagram.com',
+  'https://www.instagram.com/',
   'https://twitter.com',
 ];
 
@@ -17,11 +17,18 @@ let otherIndex = 0;
 
 app.get('/', async (req, res) => {
   try {
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const geo = await axios.get(`https://ipapi.co/${ip}/json/`);
-    const countryCode = geo.data.country_code;
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-    if (countryCode === 'US') {
+    // If IP is local or undefined, use a fallback test IP
+    if (!ip || ip === '::1' || ip.startsWith('127.') || ip.includes('::ffff:127')) {
+      ip = '8.8.8.8'; // test with a US IP
+    }
+
+    const geo = await axios.get(`https://ipapi.co/${ip}/json/`);
+    const country = geo.data.country;
+    console.log(`IP: ${ip} | Country: ${country}`);
+
+    if (country === 'US') {
       const redirectUrl = usLinks[usIndex];
       usIndex = (usIndex + 1) % usLinks.length;
       return res.redirect(redirectUrl);
@@ -31,8 +38,11 @@ app.get('/', async (req, res) => {
       return res.redirect(redirectUrl);
     }
   } catch (error) {
-    // fallback: redirect to first non-US link
-    return res.redirect(otherLinks[0]);
+    console.error('Geo error:', error.message);
+    // fallback in case of geo failure
+    const fallbackUrl = otherLinks[otherIndex];
+    otherIndex = (otherIndex + 1) % otherLinks.length;
+    return res.redirect(fallbackUrl);
   }
 });
 
