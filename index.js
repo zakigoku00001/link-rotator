@@ -8,7 +8,7 @@ const usLinks = [
 ];
 
 const otherLinks = [
-  'https://www.instagram.com/,
+  'https://www.instagram.com',
   'https://twitter.com',
 ];
 
@@ -17,11 +17,11 @@ let otherIndex = 0;
 
 app.get('/', async (req, res) => {
   try {
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const geo = await axios.get(`https://ipapi.co/${ip}/json/`);
-    const country = geo.data.country;
+    const countryCode = geo.data.country_code;
 
-    if (country === 'US') {
+    if (countryCode === 'US') {
       const redirectUrl = usLinks[usIndex];
       usIndex = (usIndex + 1) % usLinks.length;
       return res.redirect(redirectUrl);
@@ -31,9 +31,10 @@ app.get('/', async (req, res) => {
       return res.redirect(redirectUrl);
     }
   } catch (error) {
+    // fallback: redirect to first non-US link
     return res.redirect(otherLinks[0]);
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
