@@ -8,7 +8,7 @@ const usLinks = [
 ];
 
 const otherLinks = [
-  'https:/instagram.com',
+  'https://www.instagram.com/,
   'https://twitter.com',
 ];
 
