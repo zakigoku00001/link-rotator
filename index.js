@@ -8,43 +8,40 @@ const usLinks = [
 ];
 
 const otherLinks = [
-  'https://www.instagram.com/',
+  'https://www.instagram.com',
   'https://twitter.com',
 ];
 
 let usIndex = 0;
 let otherIndex = 0;
 
+app.set('trust proxy', true); // Important for getting real IP from x-forwarded-for
+
 app.get('/', async (req, res) => {
   try {
-    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.ip;
 
-    // If IP is local or undefined, use a fallback test IP
-    if (!ip || ip === '::1' || ip.startsWith('127.') || ip.includes('::ffff:127')) {
-      ip = '8.8.8.8'; // test with a US IP
+    // Fallback in case IP is localhost or internal
+    if (!ip || ip.startsWith('127.') || ip.startsWith('::1')) {
+      console.log(`Fallback IP used: ${ip}`);
+      return res.redirect(otherLinks[otherIndex++ % otherLinks.length]);
     }
 
     const geo = await axios.get(`https://ipapi.co/${ip}/json/`);
     const country = geo.data.country;
-    console.log(`IP: ${ip} | Country: ${country}`);
 
     if (country === 'US') {
-      const redirectUrl = usLinks[usIndex];
-      usIndex = (usIndex + 1) % usLinks.length;
+      const redirectUrl = usLinks[usIndex++ % usLinks.length];
       return res.redirect(redirectUrl);
     } else {
-      const redirectUrl = otherLinks[otherIndex];
-      otherIndex = (otherIndex + 1) % otherLinks.length;
+      const redirectUrl = otherLinks[otherIndex++ % otherLinks.length];
       return res.redirect(redirectUrl);
     }
   } catch (error) {
-    console.error('Geo error:', error.message);
-    // fallback in case of geo failure
-    const fallbackUrl = otherLinks[otherIndex];
-    otherIndex = (otherIndex + 1) % otherLinks.length;
-    return res.redirect(fallbackUrl);
+    console.error('Geo lookup failed:', error.message);
+    return res.redirect(otherLinks[otherIndex++ % otherLinks.length]);
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
