@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 
 const links = [
-  'https://youtube.com',
-  'https://facebook.com',
-  'https://google.com'
+  'https://afflat3e3.com/trk/lnk/B9668DD2-EB51-47EF-A4B0-ED0B359C8F70/?o=6365&c=918277&a=744563&k=BF40FC282716BA496C23E54153D0AD11&l=5077',
+  'https://afflat3e3.com/trk/lnk/B9668DD2-EB51-47EF-A4B0-ED0B359C8F70/?o=6365&c=918277&a=744563&k=BF40FC282716BA496C23E54153D0AD11&l=5077',
+  'https://afflat3e3.com/trk/lnk/B9668DD2-EB51-47EF-A4B0-ED0B359C8F70/?o=6365&c=918277&a=744563&k=BF40FC282716BA496C23E54153D0AD11&l=5077'
 ];
 
 let currentIndex = 0;
